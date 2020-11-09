@@ -9,7 +9,9 @@
 export default {
   name: "HelloWorld",
   data() {
-    return {};
+    return {
+      initData: {}
+    };
   },
   created() {},
   mounted() {},
