@@ -2,7 +2,9 @@
   <div class="hello">
     <div :id="viewer"></div>
   </div>
+
 </template>
+
 
 <script>
 import PhotoSphereViewer from "photo-sphere-viewer";
@@ -131,6 +133,7 @@ export default {
 </script>
 
 <style scoped>
+
 .hello {
   height: 100%;
 }
