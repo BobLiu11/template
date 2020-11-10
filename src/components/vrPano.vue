@@ -34,8 +34,10 @@ export default {
     async initPhotoSphere() {
       var that = this;
       let res = await this.initData(9);
-      that.panos = JSON.parse(res.data.data[1].data).data; //第一张图片
-      that.firstMakers.push(JSON.parse(res.data.data[0].data)); //第一张图片热点
+      that.panos = JSON.parse(res.data.data[1].hotpot[0].data).data; //第一张图片
+      for (let i = 0; i < res.data.data[0].hotpot.length; i++) {
+        that.firstMakers.push(JSON.parse(res.data.data[0].hotpot[i].data)); //第一张图片热点
+      }
       this.PSV = new PhotoSphereViewer({
         container: this.viewer,
         panorama: that.panos.url,
@@ -74,8 +76,10 @@ export default {
           var newDataMarkers = res.data.data.filter(function(obj) {
             return obj.sourceUrl == marker.data.url;
           });
-          for (let i = 0; i < newDataMarkers.length; i++) {
-            that.PSV.addMarker(JSON.parse(newDataMarkers[i].data));
+
+          for (let i = 0; i < newDataMarkers[0].hotpot.length; i++) {
+            that.PSV.addMarker(JSON.parse(newDataMarkers[0].hotpot[i].data));
+            console.log(JSON.parse(newDataMarkers[0].hotpot[i].data));
           }
         }
       });
@@ -105,7 +109,7 @@ export default {
       return new Promise((resolve, reject) => {
         this.axios({
           methods: "get",
-          url: "http://10.27.217.163:8088/pano/getPano",
+          url: "http://10.27.217.163:8085/pano/getPano",
           headers: {
             "Content-type": "application/x-www-form-urlencoded"
           },

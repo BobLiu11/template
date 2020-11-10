@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
-    <button @click="getPano">进入全景</button>
-    <button @click="getTest">进入tets</button>
+    <button @click="getPano">进入室外全景</button>
+    <button @click="getTest">进入室内全景</button>
   </div>
 </template>
 
