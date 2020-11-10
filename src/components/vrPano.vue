@@ -13,6 +13,7 @@ export default {
   data() {
     return {
       viewer: "viewer",
+      baseUrl: "http://10.27.217.163:8085",
       PSV: null,
       panos: {
         // url: "../../static/img/1.jpg",
@@ -40,7 +41,7 @@ export default {
       }
       this.PSV = new PhotoSphereViewer({
         container: this.viewer,
-        panorama: that.panos.url,
+        panorama: that.baseUrl + that.panos.url,
         target: that.panos.target,
         caption: that.panos.desc, //导航栏中显示的文本。如果导航栏被禁用，它将不显示，但没有按钮
         // autoload: false, //可选，默认值为true，true为自动调用全景图，false为加载全景图(通过.load()方法)
@@ -71,7 +72,11 @@ export default {
       this.PSV.on("select-marker", function(marker) {
         if (marker.data) {
           that.PSV.clearMarkers();
-          that.PSV.setPanorama(marker.data.url, marker.data.target, true);
+          that.PSV.setPanorama(
+            that.baseUrl + marker.data.url,
+            marker.data.target,
+            true
+          );
           that.PSV.setCaption(marker.data.desc);
           var newDataMarkers = res.data.data.filter(function(obj) {
             return obj.sourceUrl == marker.data.url;
@@ -109,7 +114,7 @@ export default {
       return new Promise((resolve, reject) => {
         this.axios({
           methods: "get",
-          url: "http://10.27.217.163:8085/pano/getPano",
+          url: that.baseUrl + "/pano/getPano",
           headers: {
             "Content-type": "application/x-www-form-urlencoded"
           },
