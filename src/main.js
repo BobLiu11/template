@@ -6,9 +6,12 @@ import VueAxios from "vue-axios";
 import App from "./App";
 import router from "./router";
 import "./mock/mock";
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 Vue.config.productionTip = false;
 
 Vue.use(VueAxios, axios);
+Vue.use(ElementUI);
 /* eslint-disable no-new */
 new Vue({
   el: "#app",

@@ -1,6 +1,13 @@
 <template>
   <div class="hello">
     <div :id="viewer"></div>
+    <div class="Thumbnail" v-if="ThumbnailBoolean">
+      <div class="inline" v-for="fit in fits" :key="fit" @click="turnPano()">
+        <img class="imgClass" :src="url" />
+        <span class="imgTitle">{{ fit }}</span>
+      </div>
+      <div class="academyName">山东大学软件学院</div>
+    </div>
   </div>
 </template>
 
@@ -24,7 +31,11 @@ export default {
         //   latitude: -0.244
         // }
       },
-      firstMakers: []
+      firstMakers: [],
+      ThumbnailBoolean: false,
+      fits: ["软件学院正门", "教学楼六区", "食堂", "宿舍2号楼", "篮球场"],
+      url:
+        "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
     };
   },
   created() {},
@@ -62,7 +73,30 @@ export default {
         maxFov: 90, //最大视场 默认： 90
         default_fov: 90,
         defaultZoomLvl: 30, //初始缩放级别，默认： 30
-        navbar: ["autorotate", "zoom", "caption", "markers", "fullscreen"],
+        navbar: [
+          "autorotate",
+          "zoom",
+          {
+            title: "Thumbnail",
+            className: "Thumbnail",
+            content: "Thumbnail",
+            onClick: function() {
+              if (that.ThumbnailBoolean) {
+                that.ThumbnailBoolean = false;
+                console.log(that.ThumbnailBoolean);
+              } else {
+                that.ThumbnailBoolean = true;
+                console.log(that.ThumbnailBoolean);
+              }
+              // console.log(document.getElementsByClassName("Thumbnail"));
+              // alert("222");
+            }
+          },
+          "caption",
+          "stereo",
+          "markers",
+          "fullscreen"
+        ],
         // markers: (function() {
         //   return that.initMarkers();
         // })()
@@ -84,7 +118,7 @@ export default {
 
           for (let i = 0; i < newDataMarkers[0].hotpot.length; i++) {
             that.PSV.addMarker(JSON.parse(newDataMarkers[0].hotpot[i].data));
-            console.log(JSON.parse(newDataMarkers[0].hotpot[i].data));
+            //console.log(JSON.parse(newDataMarkers[0].hotpot[i].data));
           }
         }
       });
@@ -133,8 +167,51 @@ export default {
 <style scoped>
 .hello {
   height: 100%;
+  position: relative;
 }
-.viewer {
+.Thumbnail {
+  position: absolute;
+  bottom: 5%;
+  width: 100%;
+  height: 150px;
+  background-color: #a7a09a;
+  opacity: 0.9;
+  text-align: center;
+}
+/* .Container {
+  position: relative;
   height: 100%;
+  text-align: center;
+  background-color: red;
+} */
+.inline {
+  position: relative;
+  display: inline-block;
+  margin: 5px 10px;
+  width: 100px;
+  height: 100px;
+  align-content: center;
+}
+.academyName {
+  position: absolute;
+  bottom: 5%;
+  width: 100%;
+  text-align: center;
+}
+.imgClass {
+  position: absolute;
+  left: 2%;
+  display: inline-block;
+  width: 100%;
+  height: 100px;
+  text-align: center;
+}
+.imgTitle {
+  position: absolute;
+  bottom: 0%;
+  left: 2%;
+  width: 100%;
+  text-align: center;
+  background-color: #4c4d4f;
 }
 </style>
