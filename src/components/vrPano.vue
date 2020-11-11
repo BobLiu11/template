@@ -83,7 +83,6 @@ export default {
           var newDataMarkers = res.data.data.filter(function(obj) {
             return obj.sourceUrl == marker.data.url;
           });
-
           for (let i = 0; i < newDataMarkers[0].hotpot.length; i++) {
             that.PSV.addMarker(JSON.parse(newDataMarkers[0].hotpot[i].data));
             console.log(JSON.parse(newDataMarkers[0].hotpot[i].data));
