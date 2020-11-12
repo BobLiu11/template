@@ -14,9 +14,7 @@
       <div class="academyName">山东大学软件学院</div>
     </div>
   </div>
-
 </template>
-
 
 <script>
 import PhotoSphereViewer from "photo-sphere-viewer";
@@ -109,22 +107,19 @@ export default {
         ],
         markers: this.firstMakers
       });
-        
-        this.PSV.on('select-marker', function(marker) {
-				// console.log(marker);
-				if(marker.data) {
+
+      this.PSV.on("select-marker", function(marker) {
+        if (marker.data) {
           that.PSV.clearMarkers();
           var newDataMarkers = res.data.data.filter(function(obj) {
             return obj.sourceUrl == marker.data.url;
           });
-
-
           that.PSV.setPanorama(
-          that.baseUrl + marker.data.url,
-          marker.data.target, 
-          true
+            that.baseUrl + marker.data.url,
+            marker.data.target,
+            true
           )
-						.then(function() {
+          .then(function() {
 							that.PSV.setCaption(marker.data.desc);
 							// var len = common2().length;
 							for(var i = 0; i < newDataMarkers[0].hotpot.length; i++) {
@@ -133,13 +128,8 @@ export default {
                that.PSV.setCaption(marker.data.desc);
                
             });
-            
-
-
-
-
-
-         
+        }
+      });
 
       // this.PSV.on("dblclick", function(e) {
       //   that.PSV.addMarker({
@@ -202,7 +192,6 @@ export default {
 </script>
 
 <style scoped>
-
 .hello {
   height: 100%;
   position: relative;
