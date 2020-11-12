@@ -14,7 +14,9 @@
       <div class="academyName">山东大学软件学院</div>
     </div>
   </div>
+
 </template>
+
 
 <script>
 import PhotoSphereViewer from "photo-sphere-viewer";
@@ -120,7 +122,6 @@ export default {
           var newDataMarkers = res.data.data.filter(function(obj) {
             return obj.sourceUrl == marker.data.url;
           });
-
           for (let i = 0; i < newDataMarkers[0].hotpot.length; i++) {
             that.PSV.addMarker(JSON.parse(newDataMarkers[0].hotpot[i].data));
           }
@@ -188,6 +189,7 @@ export default {
 </script>
 
 <style scoped>
+
 .hello {
   height: 100%;
   position: relative;
