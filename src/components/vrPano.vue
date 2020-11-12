@@ -14,7 +14,9 @@
       <div class="academyName">山东大学软件学院</div>
     </div>
   </div>
+
 </template>
+
 
 <script>
 import PhotoSphereViewer from "photo-sphere-viewer";
@@ -116,6 +118,7 @@ export default {
             return obj.sourceUrl == marker.data.url;
           });
 
+
           that.PSV.setPanorama(
           that.baseUrl + marker.data.url,
           marker.data.target, 
@@ -131,9 +134,7 @@ export default {
                
             });
             
-        }
-       
-			});
+
 
 
 
@@ -201,6 +202,7 @@ export default {
 </script>
 
 <style scoped>
+
 .hello {
   height: 100%;
   position: relative;
