@@ -20,7 +20,7 @@ export default {
   data() {
     return {
       viewer: "viewer",
-      baseUrl: "http://10.27.217.163:8085",
+      baseUrl: "http://211.87.231.41:8085",
       PSV: null,
       panos: {
         // url: "../../static/img/1.jpg",
@@ -102,26 +102,35 @@ export default {
         // })()
         markers: this.firstMakers
       });
-
-      this.PSV.on("select-marker", function(marker) {
-        if (marker.data) {
+        
+        this.PSV.on('select-marker', function(marker) {
+				// console.log(marker);
+				if(marker.data) {
           that.PSV.clearMarkers();
-          that.PSV.setPanorama(
-            that.baseUrl + marker.data.url,
-            marker.data.target,
-            true
-          );
-          that.PSV.setCaption(marker.data.desc);
           var newDataMarkers = res.data.data.filter(function(obj) {
             return obj.sourceUrl == marker.data.url;
           });
-
-          for (let i = 0; i < newDataMarkers[0].hotpot.length; i++) {
-            that.PSV.addMarker(JSON.parse(newDataMarkers[0].hotpot[i].data));
-            //console.log(JSON.parse(newDataMarkers[0].hotpot[i].data));
-          }
+          that.PSV.setPanorama(
+          that.baseUrl + marker.data.url,
+          marker.data.target, 
+          true
+          )
+						.then(function() {
+							that.PSV.setCaption(marker.data.desc);
+							// var len = common2().length;
+							for(var i = 0; i < newDataMarkers[0].hotpot.length; i++) {
+								that.PSV.addMarker(JSON.parse(newDataMarkers[0].hotpot[i].data));
+							}
+               that.PSV.setCaption(marker.data.desc);
+               
+            });
+            
         }
-      });
+       
+			});
+
+
+
       // this.PSV.on("dblclick", function(e) {
       //   that.PSV.addMarker({
       //     id: "#" + Math.random(),
