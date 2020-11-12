@@ -138,8 +138,7 @@ export default {
 
 
 
-          
-
+         
 
       // this.PSV.on("dblclick", function(e) {
       //   that.PSV.addMarker({
