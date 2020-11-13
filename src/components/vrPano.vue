@@ -1,12 +1,13 @@
 <template>
   <div class="hello">
     <div :id="viewer"></div>
-    <div class="Thumbnail" v-if="ThumbnailBoolean">
+    <div class="imgContent" v-if="ThumbnailBoolean">
       <div
         class="inline"
+        :class="{turnInline:index==indexPano}"
         v-for="(thumb, index) in thumbnailArray"
         :key="index"
-        @click="turnPano(thumb)"
+        @click="turnPano(thumb,index)"
       >
         <img class="imgClass" :src="baseUrl + thumb.thumbUrl" />
         <span class="imgTitle">{{ thumb.sourceName }}</span>
@@ -25,18 +26,15 @@ export default {
   data() {
     return {
       viewer: "viewer",
-      baseUrl: "http://211.87.231.41:8085",
+      baseUrl: "http://211.87.231.41:8089",
       PSV: null,
       panos: {},
       firstMakers: [],
       ThumbnailBoolean: false,
-      thumbnailArray: [
-        // {
-        //   sourceName: "软件学院正门",
-        //   thumbUrl: "/panoImage/thumb_DJI_0030.jpg"
-        // },
-      ],
-      resData: []
+      thumbnailArray: [],
+      changeSelectStyle:'',//设置样式
+      sourceId:0,//定义当前显示图片的sourceId
+      indexPano:0,
     };
   },
   created() {},
@@ -46,7 +44,7 @@ export default {
   methods: {
     async initPhotoSphere() {
       var that = this;
-      let res = await this.initData(9);
+      let res = await this.initData(0);
       //获取缩略图图片地址信息和图片中热点信息
       for (let j = 0; j < res.data.data.length; j++) {
         if (res.data.data[j].thumbUrl) {
@@ -54,13 +52,13 @@ export default {
           this.thumbnailArray[j].sourceName = res.data.data[j].sourceName;
           this.thumbnailArray[j].thumbUrl = res.data.data[j].thumbUrl;
           this.thumbnailArray[j].sourceUrl = res.data.data[j].sourceUrl;
-          this.thumbnailArray[j].hotpot = res.data.data[j].hotpot;
+          this.thumbnailArray[j].hotpots = res.data.data[j].hotpots;
         }
       }
       //初始化第一张图片
-      that.panos = JSON.parse(res.data.data[1].hotpot[0].data).data; //第一张图片
-      for (let i = 0; i < res.data.data[0].hotpot.length; i++) {
-        that.firstMakers.push(JSON.parse(res.data.data[0].hotpot[i].data)); //第一张图片热点
+      that.panos = JSON.parse(res.data.data[1].hotpots[0].data).data; //第一张图片
+      for (let i = 0; i < res.data.data[0].hotpots.length; i++) {
+        that.firstMakers.push(JSON.parse(res.data.data[0].hotpots[i].data)); //第一张图片热点
       }
       this.PSV = new PhotoSphereViewer({
         container: this.viewer,
@@ -89,9 +87,10 @@ export default {
           "autorotate",
           "zoom",
           {
-            title: "Thumbnail",
+            id: 'Thumbnail',
+            title: "缩略图",
             className: "Thumbnail",
-            content: "Thumbnail",
+            content: "缩略图",
             onClick: function() {
               if (that.ThumbnailBoolean) {
                 that.ThumbnailBoolean = false;
@@ -107,13 +106,14 @@ export default {
         ],
         markers: this.firstMakers
       });
-
+      this.PSV.getNavbarButton('Thumbnail').container.style.width="50px"//设置自定义按钮样式
       this.PSV.on("select-marker", function(marker) {
         if (marker.data) {
           that.PSV.clearMarkers();
           var newDataMarkers = res.data.data.filter(function(obj) {
             return obj.sourceUrl == marker.data.url;
           });
+          console.log(marker)
           that.PSV.setPanorama(
             that.baseUrl + marker.data.url,
             marker.data.target,
@@ -121,16 +121,13 @@ export default {
           )
           .then(function() {
 							that.PSV.setCaption(marker.data.desc);
-							// var len = common2().length;
-							for(var i = 0; i < newDataMarkers[0].hotpot.length; i++) {
-								that.PSV.addMarker(JSON.parse(newDataMarkers[0].hotpot[i].data));
+							for(var i = 0; i < newDataMarkers[0].hotpots.length; i++) {
+								that.PSV.addMarker(JSON.parse(newDataMarkers[0].hotpots[i].data));
 							}
                that.PSV.setCaption(marker.data.desc);
-               
-            });
+          });
         }
       });
-
       // this.PSV.on("dblclick", function(e) {
       //   that.PSV.addMarker({
       //     id: "#" + Math.random(),
@@ -169,23 +166,19 @@ export default {
         });
       });
     },
-    turnPano(value) {
-      console.log(value);
-      this.PSV.clearMarkers();
-      this.PSV.setPanorama(this.baseUrl + value.sourceUrl, true);
-      this.PSV.setCaption(value.sourceName);
-      console.log(JSON.parse(value.hotpot[0].data));
-      for (let k = 0; k < value.hotpot.lenght; k++) {
-        console.log(JSON.parse(value.hotpot[i].data));
-        this.PSV.addMarker(JSON.parse(value.hotpot[i].data));
+    
+    turnPano(value,index) {
+      if(this.indexPano!=index){
+        this.indexPano=index
+        let that=this
+        this.PSV.clearMarkers();
+        this.PSV.setCaption(value.sourceName);
+        this.PSV.setPanorama(this.baseUrl + value.sourceUrl, true).then(function(){
+          for (let k = 0; k < value.hotpots.length; k++) {
+            that.PSV.addMarker(JSON.parse(value.hotpots[k].data));
+          }
+        });
       }
-
-      // var newDataMarkers = res.data.data.filter(function(obj) {
-      //   return obj.sourceUrl == marker.data.url;
-      // });
-      // for (let i = 0; i < newDataMarkers[0].hotpot.length; i++) {
-      //   this.PSV.addMarker(JSON.parse(newDataMarkers[0].hotpot[i].data));
-      // }
     }
   }
 };
@@ -196,29 +189,26 @@ export default {
   height: 100%;
   position: relative;
 }
-.Thumbnail {
+.imgContent {
   position: absolute;
   bottom: 5%;
   width: 100%;
   height: 150px;
-  /* background-color: #a7a09a; */
   opacity: 0.9;
   text-align: center;
   z-index: 10;
 }
-/* .Container {
-  position: relative;
-  height: 100%;
-  text-align: center;
-  background-color: red;
-} */
 .inline {
   position: relative;
   display: inline-block;
   margin: 5px 10px;
   width: 100px;
   height: 100px;
+  border: 2px solid #fff;
   align-content: center;
+}
+.turnInline{
+  border: 2px solid #F6B64C;
 }
 .academyName {
   position: absolute;
@@ -229,9 +219,8 @@ export default {
 }
 .imgClass {
   position: absolute;
-  left: 2%;
+  left: 0%;
   display: inline-block;
-  border: 2px solid #fff;
   width: 100%;
   height: 100px;
   text-align: center;
@@ -239,10 +228,9 @@ export default {
 .imgTitle {
   position: absolute;
   bottom: 0%;
-  left: 5%;
+  left: 1%;
   width: 99%;
   text-align: center;
-  /* background-color: #4c4d4f; */
   color: #fff;
 }
 </style>
