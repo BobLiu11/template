@@ -1,18 +1,21 @@
 <template>
   <div class="hello">
-    <div :id="viewer"></div>
+    <div :id="viewer" :key="buildId"></div>
     <div class="imgContent" v-if="ThumbnailBoolean">
       <div
         class="inline"
-        :class="{turnInline:index==indexPano}"
+        :class="{ turnInline: index == indexPano }"
         v-for="(thumb, index) in thumbnailArray"
         :key="index"
-        @click="turnPano(thumb,index)"
+        @click="turnPano(thumb, index)"
       >
         <img class="imgClass" :src="baseUrl + thumb.thumbUrl" />
         <span class="imgTitle">{{ thumb.sourceName }}</span>
       </div>
-      <div class="academyName">山东大学软件学院</div>
+      <div class="academyName">
+        <button @click="turnSoft">山东大学软件学院</button>
+        <button @click="turnSearch">科研楼</button>
+      </div>
     </div>
   </div>
 </template>
@@ -30,22 +33,30 @@ export default {
       PSV: null,
       panos: {},
       firstMakers: [],
-      ThumbnailBoolean: false,
+      ThumbnailBoolean: false, //缩略图
       thumbnailArray: [],
-      changeSelectStyle:'',//设置样式
-      sourceId:0,//定义当前显示图片的sourceId
-      indexPano:0,
+      changeSelectStyle: "", //设置样式
+      sourceId: 0, //定义当前显示图片的sourceId
+      indexPano: 0,
+      buildId: 9, //0代表软件学院室外全景 9代表科研楼
+      refresh: true,
     };
   },
-  created() {},
-  mounted() {
-    this.initPhotoSphere();
+  created() {
+    this.initPhotoSphere(this.buildId);
   },
+  watch: {
+    buildId: function (newData, oldData) {
+      this.initPhotoSphere(newData);
+    },
+  },
+  mounted() {},
   methods: {
-    async initPhotoSphere() {
+    async initPhotoSphere(buildId) {
       var that = this;
-      let res = await this.initData(0);
+      let res = await this.initData(buildId);
       //获取缩略图图片地址信息和图片中热点信息
+      this.thumbnailArray = [];
       for (let j = 0; j < res.data.data.length; j++) {
         if (res.data.data[j].thumbUrl) {
           this.thumbnailArray[j] = {};
@@ -57,6 +68,7 @@ export default {
       }
       //初始化第一张图片
       that.panos = JSON.parse(res.data.data[1].hotpots[0].data).data; //第一张图片
+      that.firstMakers = [];
       for (let i = 0; i < res.data.data[0].hotpots.length; i++) {
         that.firstMakers.push(JSON.parse(res.data.data[0].hotpots[i].data)); //第一张图片热点
       }
@@ -72,12 +84,12 @@ export default {
         plugins: [], //插件列表
         transition: {
           duration: 1000, // duration of transition in milliseconds
-          loader: false // should display the loader ?
+          loader: false, // should display the loader ?
         },
         size: {
           //全景容器的最终尺寸
           width: "100%",
-          height: "100%"
+          height: "100%",
         },
         minFov: 30, //最小视野  默认：30
         maxFov: 90, //最大视场 默认： 90
@@ -87,44 +99,48 @@ export default {
           "autorotate",
           "zoom",
           {
-            id: 'Thumbnail',
+            id: "Thumbnail",
             title: "缩略图",
             className: "Thumbnail",
             content: "缩略图",
-            onClick: function() {
+            onClick: function () {
               if (that.ThumbnailBoolean) {
                 that.ThumbnailBoolean = false;
               } else {
                 that.ThumbnailBoolean = true;
               }
-            }
+            },
           },
           "caption",
           "stereo",
           "markers",
-          "fullscreen"
+          "fullscreen",
         ],
-        markers: this.firstMakers
+        markers: this.firstMakers,
       });
-      this.PSV.getNavbarButton('Thumbnail').container.style.width="50px"//设置自定义按钮样式
-      this.PSV.on("select-marker", function(marker) {
+
+      this.PSV.getNavbarButton("Thumbnail").container.style.width = "50px"; //设置自定义按钮样式
+      this.PSV.on("select-marker", function (marker) {
         if (marker.data) {
           that.PSV.clearMarkers();
-          var newDataMarkers = res.data.data.filter(function(obj) {
+          var newDataMarkers = res.data.data.filter(function (obj) {
             return obj.sourceUrl == marker.data.url;
           });
-          console.log(marker)
+          for (let i = 0; i < res.data.data.length; i++) {
+            if (newDataMarkers[0].sourceId == res.data.data[i].sourceId) {
+              that.indexPano = i;
+            }
+          }
           that.PSV.setPanorama(
             that.baseUrl + marker.data.url,
             marker.data.target,
             true
-          )
-          .then(function() {
-							that.PSV.setCaption(marker.data.desc);
-							for(var i = 0; i < newDataMarkers[0].hotpots.length; i++) {
-								that.PSV.addMarker(JSON.parse(newDataMarkers[0].hotpots[i].data));
-							}
-               that.PSV.setCaption(marker.data.desc);
+          ).then(function () {
+            that.PSV.setCaption(marker.data.desc);
+            for (var i = 0; i < newDataMarkers[0].hotpots.length; i++) {
+              that.PSV.addMarker(JSON.parse(newDataMarkers[0].hotpots[i].data));
+            }
+            that.PSV.setCaption(marker.data.desc);
           });
         }
       });
@@ -156,31 +172,52 @@ export default {
           methods: "get",
           url: that.baseUrl + "/pano/getPano",
           headers: {
-            "Content-type": "application/x-www-form-urlencoded"
+            "Content-type": "application/x-www-form-urlencoded",
           },
           params: {
-            buildId: buildid
-          }
-        }).then(res => {
-          resolve(res);
-        });
+            buildId: buildid,
+          },
+        })
+          .then((res) => {
+            resolve(res);
+          })
+          .catch((err) => {
+            reject(err);
+          });
       });
     },
-    
-    turnPano(value,index) {
-      if(this.indexPano!=index){
-        this.indexPano=index
-        let that=this
+    //缩略图转换
+    turnPano(value, index) {
+      if (this.indexPano != index) {
+        this.indexPano = index;
+        let that = this;
         this.PSV.clearMarkers();
         this.PSV.setCaption(value.sourceName);
-        this.PSV.setPanorama(this.baseUrl + value.sourceUrl, true).then(function(){
-          for (let k = 0; k < value.hotpots.length; k++) {
-            that.PSV.addMarker(JSON.parse(value.hotpots[k].data));
+        this.PSV.setPanorama(this.baseUrl + value.sourceUrl, true).then(
+          function () {
+            for (let k = 0; k < value.hotpots.length; k++) {
+              that.PSV.addMarker(JSON.parse(value.hotpots[k].data));
+            }
           }
-        });
+        );
       }
-    }
-  }
+    },
+    //场景转换
+    turnSoft() {
+      //转换到软件学院全景
+      if (this.buildId != 0) {
+        this.buildId = 0;
+        this.ThumbnailBoolean = false;
+      }
+    },
+    turnSearch() {
+      //转换到科研楼全景
+      if (this.buildId != 9) {
+        this.buildId = 9;
+        this.ThumbnailBoolean = false;
+      }
+    },
+  },
 };
 </script>
 
@@ -204,11 +241,11 @@ export default {
   margin: 5px 10px;
   width: 100px;
   height: 100px;
-  border: 2px solid #fff;
+  border: 3px solid #fff;
   align-content: center;
 }
-.turnInline{
-  border: 2px solid #F6B64C;
+.turnInline {
+  border: 3px solid #f6b64c;
 }
 .academyName {
   position: absolute;
