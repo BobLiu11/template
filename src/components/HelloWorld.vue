@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
     <button @click="getPano">进入室外全景</button>
-    <button @click="getTest">进入室内全景</button>
+    <button @click="getTest">进入科研楼</button>
   </div>
 </template>
 
@@ -9,9 +9,7 @@
 export default {
   name: "HelloWorld",
   data() {
-    return {
-      initData: {}
-    };
+    return {};
   },
   created() {},
   mounted() {},
@@ -20,9 +18,9 @@ export default {
       this.$router.push({ path: "./vrPano" });
     },
     getTest() {
-      this.$router.push({ path: "./test" });
-    }
-  }
+      this.$router.push({ path: "./searchBuild" });
+    },
+  },
 };
 </script>
 
