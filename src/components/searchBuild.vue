@@ -19,13 +19,6 @@
       <div class="academyName">
         <div
           class="selectArea"
-          :class="{ selectItem: 0 == buildId }"
-          @click="turnSoft"
-        >
-          山东大学软件学院
-        </div>
-        <div
-          class="selectArea"
           :class="{ selectItem: 9 == buildId }"
           @click="turnSearch"
         >
@@ -54,7 +47,7 @@ export default {
       changeSelectStyle: "", //设置样式
       sourceId: 0, //定义当前显示图片的sourceId
       indexPano: 0, //表示初始显示第一张图片
-      buildId: 0, //0代表软件学院室外全景 9代表科研楼
+      buildId: 9, //0代表软件学院室外全景 9代表科研楼
     };
   },
   created() {
