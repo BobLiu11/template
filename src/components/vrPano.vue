@@ -115,9 +115,9 @@ export default {
           "zoom",
           {
             id: "Thumbnail",
-            title: "缩略图",
+            title: "场景选择",
             className: "Thumbnail",
-            content: "缩略图",
+            content: "场景选择",
             onClick: function () {
               if (that.ThumbnailBoolean) {
                 that.ThumbnailBoolean = false;
@@ -134,8 +134,14 @@ export default {
         markers: this.firstMakers,
       });
 
-      this.PSV.getNavbarButton("Thumbnail").container.style.width = "50px"; //设置自定义按钮样式
+      this.PSV.getNavbarButton("Thumbnail").container.style.width = "70px"; //设置自定义按钮样式
       this.PSV.on("select-marker", function (marker) {
+        //在场景内不同接口的全景图跳转 1代表跳转到科研楼
+        if (marker.id == 1) {
+          that.buildId = 9;
+          that.ThumbnailBoolean = false;
+          that.indexPano = 0;
+        }
         if (marker.data) {
           that.PSV.clearMarkers();
           var newDataMarkers = res.data.data.filter(function (obj) {
