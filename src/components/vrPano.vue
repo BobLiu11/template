@@ -33,6 +33,23 @@
         </div>
       </div>
     </div>
+    <div class="raderMap">
+      <div class="mapContainer" @click="openMusic">
+        <img class="imgMusic" src="../../static/img/music.png" />
+        <audio
+          id="audios"
+          src="../../static/mp3/szovo.mp3"
+          autoplay="autoplay"
+          loop="true"
+        ></audio>
+      </div>
+      <div class="mapContainer" @click="openMap">
+        <img class="imgMusic" src="../../static/img/map.png" />
+      </div>
+      <div class="softwareContainer">
+        <img class="imgSoftware" src="../../static/img/software.png" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -55,10 +72,12 @@ export default {
       sourceId: 0, //定义当前显示图片的sourceId
       indexPano: 0, //表示初始显示第一张图片
       buildId: 0, //0代表软件学院室外全景 9代表科研楼
+      playMusic: true, //播放音乐
     };
   },
   created() {
     this.initPhotoSphere(this.buildId);
+    // this.openMusic();
   },
   watch: {
     buildId: function (newData, oldData) {
@@ -240,6 +259,21 @@ export default {
         this.indexPano = 0;
       }
     },
+    /**实现音乐和小地图方法 */
+    openMusic() {
+      let audio = document.querySelector("#audios");
+      let musicImg = document.querySelector(".imgMusic");
+      if (this.playMusic) {
+        audio.play();
+        this.playMusic = false;
+        musicImg.src = "../../static/img/music.png";
+      } else {
+        audio.pause();
+        this.playMusic = true;
+        musicImg.src = "../../static/img/stopMusic.png";
+      }
+    },
+    openMap() {},
   },
 };
 </script>
@@ -305,5 +339,38 @@ export default {
 }
 .selectItem {
   border-bottom: 3px solid #f6b64c;
+}
+.raderMap {
+  position: absolute;
+  top: 1%;
+  left: 0%;
+  z-index: 10;
+}
+.mapContainer {
+  margin: 15px 10px;
+  padding: 0;
+  width: 35px;
+  height: 35px;
+  line-height: 40px;
+  background-color: rgb(139, 138, 138);
+  text-align: center;
+  border-radius: 50%;
+  opacity: 0.8;
+}
+.imgMusic {
+  display: inline-block;
+  width: 60%;
+  height: 60%;
+  line-height: 60%;
+  text-align: center;
+}
+.softwareContainer {
+  width: 200px;
+  height: 200px;
+}
+.imgSoftware {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
 }
 </style>
