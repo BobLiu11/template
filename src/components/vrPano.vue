@@ -46,9 +46,28 @@
       <div class="mapContainer" @click="openMap">
         <img class="imgMusic" src="../../static/img/map.png" />
       </div>
-      <div class="softwareContainer">
-        <img class="imgSoftware" src="../../static/img/software.png" />
-      </div>
+      <transition name="slide-fade">
+        <div v-if="showMap" class="softwareContainer">
+          <img class="imgSoftware" src="../../static/img/software.png" />
+          <div
+            v-for="(thumb, index) in thumbnailArray"
+            :key="index"
+            @click="turnPano(thumb, index)"
+          >
+            <img
+              class="blueSpot"
+              :class="'blueSpot' + index"
+              :src="index === indexPano ? redSpotSrc : blueSpotSrc"
+            />
+            <img
+              class="raderImg"
+              :class="'blueSpot' + index"
+              :src="raderSrc"
+              v-show="index === indexPano"
+            />
+          </div>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -73,11 +92,14 @@ export default {
       indexPano: 0, //表示初始显示第一张图片
       buildId: 0, //0代表软件学院室外全景 9代表科研楼
       playMusic: true, //播放音乐
+      showMap: false, //显示小地图
+      blueSpotSrc: "../../static/img/blueSpot.png",
+      redSpotSrc: "../../static/img/redSpot.png",
+      raderSrc: "../../static/img/rader.png",
     };
   },
   created() {
     this.initPhotoSphere(this.buildId);
-    // this.openMusic();
   },
   watch: {
     buildId: function (newData, oldData) {
@@ -273,7 +295,13 @@ export default {
         musicImg.src = "../../static/img/stopMusic.png";
       }
     },
-    openMap() {},
+    openMap() {
+      if (this.showMap) {
+        this.showMap = false;
+      } else {
+        this.showMap = true;
+      }
+    },
   },
 };
 </script>
@@ -365,6 +393,7 @@ export default {
   text-align: center;
 }
 .softwareContainer {
+  position: relative;
   width: 200px;
   height: 200px;
 }
@@ -372,5 +401,66 @@ export default {
   display: inline-block;
   width: 100%;
   height: 100%;
+}
+.blueSpot {
+  position: absolute;
+  bottom: 5%;
+  left: 46%;
+  display: inline-block;
+  width: 10%;
+  height: 10%;
+}
+.blueSpot0 {
+  bottom: 5%;
+  left: 46%;
+}
+.blueSpot1 {
+  bottom: 30%;
+  left: 43%;
+}
+.blueSpot2 {
+  bottom: 25%;
+  left: 63%;
+}
+.blueSpot3 {
+  bottom: 40%;
+  left: 60%;
+}
+.blueSpot4 {
+  bottom: 50%;
+  left: 45%;
+}
+.blueSpot5 {
+  bottom: 60%;
+  left: 70%;
+}
+.blueSpot6 {
+  bottom: 85%;
+  left: 80%;
+}
+.raderImgContainer {
+  position: absolute;
+  width: 60%;
+  height: 60%;
+}
+.raderImg {
+  position: absolute;
+  display: inline-block;
+  width: 30%;
+  height: 30%;
+}
+.slide-fade-enter-active {
+  transition: all 1s ease;
+}
+.slide-fade-leave-active {
+  transition: all 1s ease;
+}
+.slide-fade-enter,
+.slide-fade-leave-to {
+  transform: translateX(-200px);
+  opacity: 0;
+}
+.slide-fade-leave {
+  transform: translateX(200px);
 }
 </style>
