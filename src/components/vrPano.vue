@@ -261,8 +261,8 @@ export default {
         markers: this.firstMakers,
       });
       this.showMusicMap = true;
-      this.PSV.getNavbarButton("Thumbnail").container.style.width = "70px"; //设置自定义按钮样式
-      this.PSV.getNavbarButton("Timeline").container.style.width = "70px"; //设置自定义按钮样式
+      this.PSV.getNavbarButton("Thumbnail").container.style.width = "60px"; //设置自定义按钮样式
+      this.PSV.getNavbarButton("Timeline").container.style.width = "60px"; //设置自定义按钮样式
 
       this.PSV.on("select-marker", function (marker) {
         //在场景内不同接口的全景图跳转 1代表跳转到科研楼
