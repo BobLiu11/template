@@ -69,12 +69,58 @@
         </div>
       </transition>
     </div>
+    <div class="timeline" v-if="myswipe">
+ <Timeline  class="timeline" >
+        <TimelineItem>
+            <!-- <p class="time"  >一月</p> -->
+            <img src="../assets/time.png" class="time" @click="timenode" alt="">
+            <p class="content">一月仍处寒冬</p>
+        </TimelineItem>
+        <TimelineItem>
+            <!-- <p class="time">二月</p> -->
+            <img src="../assets/time.png" class="time" @click="timenode" alt="">
+            <p class="content">二月寒冰初融</p>
+        </TimelineItem>
+        <TimelineItem>
+            <!-- <p class="time">三月</p> -->
+            <img src="../assets/time.png" class="time" @click="timenode" alt="">
+            <p class="content">三月小草探头</p>
+        </TimelineItem>
+        <TimelineItem>
+            <!-- <p class="time">四月</p> -->
+            <img src="../assets/time.png" class="time" @click="timenode" alt="">
+            <p class="content">四月绿妆素裹</p>
+        </TimelineItem>
+        <TimelineItem>
+            <!-- <p class="time">五月</p> -->
+            <img src="../assets/time.png" class="time" @click="timenode" alt="">
+            <p class="content">五月四处生机</p>
+        </TimelineItem>
+        <TimelineItem>
+            <!-- <p class="time">五月</p> -->
+            <img src="../assets/time.png" class="time" @click="timenode" alt="">
+            <p class="content">五月四处生机</p>
+        </TimelineItem>
+        <TimelineItem>
+            <!-- <p class="time">五月</p> -->
+            <img src="../assets/time.png" class="time" @click="timenode" alt="">
+            <p class="content">五月四处生机</p>
+        </TimelineItem>
+    </Timeline>
+</div>
   </div>
 </template>
 
 <script>
 import PhotoSphereViewer from "photo-sphere-viewer";
 import "photo-sphere-viewer/dist/photo-sphere-viewer.css";
+import Vue from 'vue';
+import ViewUI from 'view-design';
+
+// import style
+import 'view-design/dist/styles/iview.css';
+
+Vue.use(ViewUI);
 
 export default {
   name: "vrPano",
@@ -86,6 +132,7 @@ export default {
       panos: {}, //第一张照片数据
       firstMakers: [], //第一张图片热点
       ThumbnailBoolean: false, //缩略图的显示与隐藏
+      myswipe:false,
       thumbnailArray: [], //获取除第一张之外，其它的缩略图图片地址信息和图片中热点信息
       changeSelectStyle: "", //设置样式
       sourceId: 0, //定义当前显示图片的sourceId
@@ -145,7 +192,7 @@ export default {
         size: {
           //全景容器的最终尺寸
           width: "100%",
-          height: "100%",
+          height: "104%",
         },
         minFov: 30, //最小视野  默认：30
         maxFov: 90, //最大视场 默认： 90
@@ -164,6 +211,21 @@ export default {
                 that.ThumbnailBoolean = false;
               } else {
                 that.ThumbnailBoolean = true;
+                that.myswipe = false;
+              }
+            },
+          },
+          {
+            id: "Timeline",
+            title: "时间轴",
+            className: "Thumbnail",
+            content: "时间轴",
+            onClick: function () {
+              if (that.myswipe) {
+                that.myswipe = false;
+              } else {
+                that.myswipe = true;
+                that.ThumbnailBoolean = false;
               }
             },
           },
@@ -176,6 +238,8 @@ export default {
       });
 
       this.PSV.getNavbarButton("Thumbnail").container.style.width = "70px"; //设置自定义按钮样式
+      this.PSV.getNavbarButton("Timeline").container.style.width = "70px"; //设置自定义按钮样式
+
       this.PSV.on("select-marker", function (marker) {
         //在场景内不同接口的全景图跳转 1代表跳转到科研楼
         if (marker.id == 1) {
@@ -462,5 +526,32 @@ export default {
 }
 .slide-fade-leave {
   transform: translateX(200px);
+}
+.timeline{
+  margin: 0px 0 0 10px;
+  position:fixed;
+  left:10;
+  bottom:0; 
+  /* position: absolute; */
+  text-align: center;
+  height: 700px;
+  width: 120px;
+}
+
+.time{
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    width: 25px;
+    height: 25px;
+}
+.content{
+    padding-left: 5px;
+    color: white;
+}
+.node{
+  color: #f6b64c;
+  width: 50px;
+  height: 50px;
 }
 </style>
