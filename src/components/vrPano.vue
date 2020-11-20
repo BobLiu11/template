@@ -33,18 +33,18 @@
         </div>
       </div>
     </div>
-    <div class="raderMap">
+    <div class="raderMap" v-if="showMusicMap">
       <div class="mapContainer" @click="openMusic">
         <img class="imgMusic" src="../../static/img/music.png" />
         <audio
           id="audios"
-          src="../../static/mp3/szovo.mp3"
+          src="../../static/mp3/SDUSong.mp3"
           autoplay="autoplay"
           loop="true"
         ></audio>
       </div>
       <div class="mapContainer" @click="openMap">
-        <img class="imgMusic" src="../../static/img/map.png" />
+        <img class="imgMap" src="../../static/img/map.png" />
       </div>
       <transition name="slide-fade">
         <div v-if="showMap" class="softwareContainer">
@@ -54,18 +54,40 @@
             :key="index"
             @click="turnPano(thumb, index)"
           >
-            <img
-              class="blueSpot"
-              :class="'blueSpot' + index"
-              :src="index === indexPano ? redSpotSrc : blueSpotSrc"
-            />
-            <img
+            <el-tooltip
+              effect="dark"
+              :content="thumb.sourceName"
+              placement="top"
+            >
+              <img
+                class="blueSpot"
+                :class="'blueSpot' + index"
+                :src="index === indexPano ? redSpotSrc : blueSpotSrc"
+              />
+            </el-tooltip>
+            <!-- <img
               class="raderImg"
               :class="'blueSpot' + index"
               :src="raderSrc"
               v-show="index === indexPano"
-            />
+            /> -->
           </div>
+          <!-- <div class="mapBottom">
+            <div class="mapBottomContainerEnlarge">
+              <img
+                class="enlarge"
+                @click="enlargeMap"
+                src="../../static/img/enlarge.png"
+              />
+            </div>
+            <div class="mapBottomContainerShrink">
+              <img
+                class="closeMap"
+                @click="openMap"
+                src="../../static/img/closeMap.png"
+              />
+            </div>
+          </div> -->
         </div>
       </transition>
     </div>
@@ -143,6 +165,7 @@ export default {
       blueSpotSrc: "../../static/img/blueSpot.png",
       redSpotSrc: "../../static/img/redSpot.png",
       raderSrc: "../../static/img/rader.png",
+      showMusicMap: false,
     };
   },
   created() {
@@ -175,6 +198,7 @@ export default {
       for (let i = 0; i < res.data.data[0].hotpots.length; i++) {
         that.firstMakers.push(JSON.parse(res.data.data[0].hotpots[i].data)); //第一张图片热点
       }
+
       this.PSV = new PhotoSphereViewer({
         container: this.viewer,
         panorama: that.baseUrl + that.panos.url,
@@ -186,7 +210,7 @@ export default {
         default_lat: 0, // 初始纬度位置(初始角度)
         plugins: [], //插件列表
         transition: {
-          duration: 1000, // duration of transition in milliseconds
+          duration: 0, // duration of transition in milliseconds
           loader: false, // should display the loader ?
         },
         size: {
@@ -236,7 +260,7 @@ export default {
         ],
         markers: this.firstMakers,
       });
-
+      this.showMusicMap = true;
       this.PSV.getNavbarButton("Thumbnail").container.style.width = "70px"; //设置自定义按钮样式
       this.PSV.getNavbarButton("Timeline").container.style.width = "70px"; //设置自定义按钮样式
 
@@ -366,6 +390,7 @@ export default {
         this.showMap = true;
       }
     },
+    enlargeMap() {},
   },
 };
 </script>
@@ -456,6 +481,13 @@ export default {
   line-height: 60%;
   text-align: center;
 }
+.imgMap {
+  display: inline-block;
+  width: 60%;
+  height: 60%;
+  line-height: 60%;
+  text-align: center;
+}
 .softwareContainer {
   position: relative;
   width: 200px;
@@ -512,6 +544,43 @@ export default {
   display: inline-block;
   width: 30%;
   height: 30%;
+}
+.mapBottom {
+  position: relative;
+  width: 100%;
+  height: 40px;
+}
+.mapBottomContainerEnlarge {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 40%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border-radius: 50%;
+  text-align: center;
+}
+.mapBottomContainerShrink {
+  position: absolute;
+  top: 0%;
+  left: 50%;
+  width: 40%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border-radius: 50%;
+  text-align: center;
+}
+.enlarge {
+  display: inline-block;
+  width: 45%;
+  height: 80%;
+}
+.closeMap {
+  display: inline-block;
+  width: 40%;
+  height: 70%;
 }
 .slide-fade-enter-active {
   transition: all 1s ease;
