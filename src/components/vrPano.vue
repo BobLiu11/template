@@ -48,7 +48,7 @@
       </div>
       <transition name="slide-fade">
         <div v-if="showMap" class="softwareContainer">
-          <img class="imgSoftware" src="../../static/img/software.png" />
+          <img class="imgSoftware" :src="baseUrl + raderMap.sourceUrl" />
           <div
             v-for="(thumb, index) in thumbnailArray"
             :key="index"
@@ -61,7 +61,7 @@
             >
               <img
                 class="blueSpot"
-                :class="'blueSpot' + index"
+                :style="{ bottom: thumb.bottom + '%', left: thumb.left + '%' }"
                 :src="index === indexPano ? redSpotSrc : blueSpotSrc"
               />
             </el-tooltip>
@@ -119,6 +119,8 @@ export default {
       redSpotSrc: "../../static/img/redSpot.png",
       raderSrc: "../../static/img/rader.png",
       showMusicMap: false,
+      raderMap: [], //存放小地图相关信息
+      raderMapSpot: [], //存放解析后的小地图标点位置信息
     };
   },
   created() {
@@ -143,8 +145,16 @@ export default {
           this.thumbnailArray[j].thumbUrl = res.data.data[j].thumbUrl;
           this.thumbnailArray[j].sourceUrl = res.data.data[j].sourceUrl;
           this.thumbnailArray[j].hotpots = res.data.data[j].hotpots;
+          this.thumbnailArray[j].bottom = res.data.data[j].x * 100;
+          this.thumbnailArray[j].left = res.data.data[j].y * 100;
         }
       }
+      console.log(this.thumbnailArray);
+      this.raderMap = res.data.data[res.data.data.length - 1]; //获取小地图数据
+      // for (let n = 0; n < this.raderMap.hotpots.length; n++) {
+      //   this.raderMapSpot[n] = JSON.parse(this.raderMap.hotpots[n].data);
+      // }
+      // console.log(this.raderMapSpot);
       //初始化第一张图片
       that.panos = JSON.parse(res.data.data[1].hotpots[0].data).data; //第一张图片
       that.firstMakers = [];
@@ -436,39 +446,9 @@ export default {
 }
 .blueSpot {
   position: absolute;
-  bottom: 5%;
-  left: 46%;
   display: inline-block;
   width: 10%;
   height: 10%;
-}
-.blueSpot0 {
-  bottom: 5%;
-  left: 46%;
-}
-.blueSpot1 {
-  bottom: 30%;
-  left: 43%;
-}
-.blueSpot2 {
-  bottom: 25%;
-  left: 63%;
-}
-.blueSpot3 {
-  bottom: 40%;
-  left: 60%;
-}
-.blueSpot4 {
-  bottom: 50%;
-  left: 45%;
-}
-.blueSpot5 {
-  bottom: 60%;
-  left: 70%;
-}
-.blueSpot6 {
-  bottom: 85%;
-  left: 80%;
 }
 .raderImgContainer {
   position: absolute;
