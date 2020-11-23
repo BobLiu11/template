@@ -35,16 +35,16 @@
     </div>
     <div class="raderMap" v-if="showMusicMap">
       <div class="mapContainer" @click="openMusic">
-        <img class="imgMusic" src="../../static/img/music.png" />
+        <img class="imgMusic" :src="musicImg" />
         <audio
           id="audios"
-          src="../../static/mp3/SDUSong.mp3"
+          :src="SDUSong"
           autoplay="autoplay"
           loop="true"
         ></audio>
       </div>
       <div class="mapContainer" @click="openMap">
-        <img class="imgMap" src="../../static/img/map.png" />
+        <img class="imgMap" :src="mapImg" />
       </div>
       <transition name="slide-fade">
         <div v-if="showMap" class="softwareContainer">
@@ -92,55 +92,55 @@
       </transition>
     </div>
     <div class="timeline" v-if="myswipe">
- <Timeline  class="timeline" >
+      <Timeline class="timeline">
         <TimelineItem>
-            <!-- <p class="time"  >一月</p> -->
-            <img src="../assets/time.png" class="time" @click="timenode" alt="">
-            <p class="content">一月仍处寒冬</p>
+          <!-- <p class="time"  >一月</p> -->
+          <img src="../assets/time.png" class="time" @click="timenode" alt="" />
+          <p class="content">一月仍处寒冬</p>
         </TimelineItem>
         <TimelineItem>
-            <!-- <p class="time">二月</p> -->
-            <img src="../assets/time.png" class="time" @click="timenode" alt="">
-            <p class="content">二月寒冰初融</p>
+          <!-- <p class="time">二月</p> -->
+          <img src="../assets/time.png" class="time" @click="timenode" alt="" />
+          <p class="content">二月寒冰初融</p>
         </TimelineItem>
         <TimelineItem>
-            <!-- <p class="time">三月</p> -->
-            <img src="../assets/time.png" class="time" @click="timenode" alt="">
-            <p class="content">三月小草探头</p>
+          <!-- <p class="time">三月</p> -->
+          <img src="../assets/time.png" class="time" @click="timenode" alt="" />
+          <p class="content">三月小草探头</p>
         </TimelineItem>
         <TimelineItem>
-            <!-- <p class="time">四月</p> -->
-            <img src="../assets/time.png" class="time" @click="timenode" alt="">
-            <p class="content">四月绿妆素裹</p>
+          <!-- <p class="time">四月</p> -->
+          <img src="../assets/time.png" class="time" @click="timenode" alt="" />
+          <p class="content">四月绿妆素裹</p>
         </TimelineItem>
         <TimelineItem>
-            <!-- <p class="time">五月</p> -->
-            <img src="../assets/time.png" class="time" @click="timenode" alt="">
-            <p class="content">五月四处生机</p>
+          <!-- <p class="time">五月</p> -->
+          <img src="../assets/time.png" class="time" @click="timenode" alt="" />
+          <p class="content">五月四处生机</p>
         </TimelineItem>
         <TimelineItem>
-            <!-- <p class="time">五月</p> -->
-            <img src="../assets/time.png" class="time" @click="timenode" alt="">
-            <p class="content">五月四处生机</p>
+          <!-- <p class="time">五月</p> -->
+          <img src="../assets/time.png" class="time" @click="timenode" alt="" />
+          <p class="content">五月四处生机</p>
         </TimelineItem>
         <TimelineItem>
-            <!-- <p class="time">五月</p> -->
-            <img src="../assets/time.png" class="time" @click="timenode" alt="">
-            <p class="content">五月四处生机</p>
+          <!-- <p class="time">五月</p> -->
+          <img src="../assets/time.png" class="time" @click="timenode" alt="" />
+          <p class="content">五月四处生机</p>
         </TimelineItem>
-    </Timeline>
-</div>
+      </Timeline>
+    </div>
   </div>
 </template>
 
 <script>
 import PhotoSphereViewer from "photo-sphere-viewer";
 import "photo-sphere-viewer/dist/photo-sphere-viewer.css";
-import Vue from 'vue';
-import ViewUI from 'view-design';
+import Vue from "vue";
+import ViewUI from "view-design";
 
 // import style
-import 'view-design/dist/styles/iview.css';
+import "view-design/dist/styles/iview.css";
 
 Vue.use(ViewUI);
 
@@ -154,7 +154,7 @@ export default {
       panos: {}, //第一张照片数据
       firstMakers: [], //第一张图片热点
       ThumbnailBoolean: false, //缩略图的显示与隐藏
-      myswipe:false,
+      myswipe: false,
       thumbnailArray: [], //获取除第一张之外，其它的缩略图图片地址信息和图片中热点信息
       changeSelectStyle: "", //设置样式
       sourceId: 0, //定义当前显示图片的sourceId
@@ -165,6 +165,10 @@ export default {
       blueSpotSrc: "../../static/img/blueSpot.png",
       redSpotSrc: "../../static/img/redSpot.png",
       raderSrc: "../../static/img/rader.png",
+      musicImg: "../../static/img/music.png",
+      stopMusicImg: "../../static/img/stopMusic.png",
+      SDUSong: "../../static/mp3/SDUSong.mp3",
+      mapImg: "../../static/img/map.png",
       showMusicMap: false,
       raderMap: [], //存放小地图相关信息
       raderMapSpot: [], //存放解析后的小地图标点位置信息
@@ -196,12 +200,7 @@ export default {
           this.thumbnailArray[j].left = res.data.data[j].y * 100;
         }
       }
-      console.log(this.thumbnailArray);
       this.raderMap = res.data.data[res.data.data.length - 1]; //获取小地图数据
-      // for (let n = 0; n < this.raderMap.hotpots.length; n++) {
-      //   this.raderMapSpot[n] = JSON.parse(this.raderMap.hotpots[n].data);
-      // }
-      // console.log(this.raderMapSpot);
       //初始化第一张图片
       that.panos = JSON.parse(res.data.data[1].hotpots[0].data).data; //第一张图片
       that.firstMakers = [];
@@ -386,11 +385,11 @@ export default {
       if (this.playMusic) {
         audio.play();
         this.playMusic = false;
-        musicImg.src = "../../static/img/music.png";
+        musicImg.src = this.musicImg;
       } else {
         audio.pause();
         this.playMusic = true;
-        musicImg.src = "../../static/img/stopMusic.png";
+        musicImg.src = this.stopMusicImg;
       }
     },
     openMap() {
@@ -400,7 +399,7 @@ export default {
         this.showMap = true;
       }
     },
-    enlargeMap() {},
+    timenode() {},
   },
 };
 </script>
@@ -436,7 +435,7 @@ export default {
   left: 0%;
   display: inline-block;
   width: 100%;
-  height: 100px;
+  height: 100%;
   text-align: center;
 }
 .imgTitle {
@@ -576,29 +575,29 @@ export default {
 .slide-fade-leave {
   transform: translateX(200px);
 }
-.timeline{
+.timeline {
   margin: 0px 0 0 10px;
-  position:fixed;
-  left:10;
-  bottom:0; 
+  position: fixed;
+  left: 10;
+  bottom: 0;
   /* position: absolute; */
   text-align: center;
   height: 700px;
   width: 120px;
 }
 
-.time{
-    font-size: 14px;
-    font-weight: bold;
-    color: white;
-    width: 25px;
-    height: 25px;
+.time {
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  width: 25px;
+  height: 25px;
 }
-.content{
-    padding-left: 5px;
-    color: white;
+.content {
+  padding-left: 5px;
+  color: white;
 }
-.node{
+.node {
   color: #f6b64c;
   width: 50px;
   height: 50px;
