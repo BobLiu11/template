@@ -4,6 +4,7 @@ import HelloWorld from '@/components/HelloWorld'
 import vrPano from '@/components/vrPano'
 import searchBuild from '@/components/searchBuild'
 
+
 Vue.use(Router)
 
 export default new Router({
