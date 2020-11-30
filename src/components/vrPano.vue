@@ -1,21 +1,23 @@
 <template>
   <div class="hello">
     <div :id="viewer" :key="buildId"></div>
-    <div class="imgContent" v-if="ThumbnailBoolean">
-      <div
-        class="inline"
-        :class="{ turnInline: index == indexPano }"
-        v-for="(thumb, index) in thumbnailArray"
-        :key="index"
-        @click="turnPano(thumb, index)"
-      >
-        <img class="imgClass" :src="baseUrl + thumb.thumbUrl" />
-        <el-tooltip effect="dark" :content="thumb.sourceName" placement="top">
-          <div class="imgTitle">
-            {{ thumb.sourceName }}
-          </div>
-        </el-tooltip>
-      </div>
+    <div class="ThumbnailContent" v-if="ThumbnailBoolean">
+      <swiper class="swiperClass" :options="swiperOption">
+        <swiper-slide
+          class="inline"
+          v-for="(thumb, index) in thumbnailArray"
+          :key="index"
+          :class="{ turnInline: index == indexPano }"
+          @click="turnPano(thumb, index)"
+        >
+          <img class="imgClass" :src="baseUrl + thumb.thumbUrl" />
+          <el-tooltip effect="dark" :content="thumb.sourceName" placement="top">
+            <div class="imgTitle">
+              {{ thumb.sourceName }}
+            </div>
+          </el-tooltip>
+        </swiper-slide>
+      </swiper>
       <div class="academyName">
         <div
           class="selectArea"
@@ -93,39 +95,39 @@
     </div>
     <div class="timeline" v-if="myswipe">
       <Timeline class="timeline">
-        <TimelineItem>
+        <TimelineItem @click="timenode">
           <!-- <p class="time"  >一月</p> -->
-          <img src="../assets/time.png" class="time" @click="timenode" alt="" />
+          <img src="../assets/time.png" class="time" alt="" />
           <p class="content">一月仍处寒冬</p>
         </TimelineItem>
         <TimelineItem>
           <!-- <p class="time">二月</p> -->
-          <img src="../assets/time.png" class="time" @click="timenode" alt="" />
+          <img src="../assets/time.png" class="time" alt="" />
           <p class="content">二月寒冰初融</p>
         </TimelineItem>
         <TimelineItem>
           <!-- <p class="time">三月</p> -->
-          <img src="../assets/time.png" class="time" @click="timenode" alt="" />
+          <img src="../assets/time.png" class="time" alt="" />
           <p class="content">三月小草探头</p>
         </TimelineItem>
         <TimelineItem>
           <!-- <p class="time">四月</p> -->
-          <img src="../assets/time.png" class="time" @click="timenode" alt="" />
+          <img src="../assets/time.png" class="time" alt="" />
           <p class="content">四月绿妆素裹</p>
         </TimelineItem>
         <TimelineItem>
           <!-- <p class="time">五月</p> -->
-          <img src="../assets/time.png" class="time" @click="timenode" alt="" />
+          <img src="../assets/time.png" class="time" alt="" />
           <p class="content">五月四处生机</p>
         </TimelineItem>
         <TimelineItem>
           <!-- <p class="time">五月</p> -->
-          <img src="../assets/time.png" class="time" @click="timenode" alt="" />
+          <img src="../assets/time.png" class="time" alt="" />
           <p class="content">五月四处生机</p>
         </TimelineItem>
         <TimelineItem>
           <!-- <p class="time">五月</p> -->
-          <img src="../assets/time.png" class="time" @click="timenode" alt="" />
+          <img src="../assets/time.png" class="time" alt="" />
           <p class="content">五月四处生机</p>
         </TimelineItem>
       </Timeline>
@@ -138,12 +140,8 @@ import PhotoSphereViewer from "photo-sphere-viewer";
 import "photo-sphere-viewer/dist/photo-sphere-viewer.css";
 import Vue from "vue";
 import ViewUI from "view-design";
-
-// import style
 import "view-design/dist/styles/iview.css";
-
 Vue.use(ViewUI);
-
 export default {
   name: "vrPano",
   data() {
@@ -172,6 +170,10 @@ export default {
       showMusicMap: false,
       raderMap: [], //存放小地图相关信息
       raderMapSpot: [], //存放解析后的小地图标点位置信息
+      swiperOption: {
+        slidesPerView: 7,
+        grabCursor: true,
+      },
     };
   },
   created() {
@@ -207,7 +209,6 @@ export default {
       for (let i = 0; i < res.data.data[0].hotpots.length; i++) {
         that.firstMakers.push(JSON.parse(res.data.data[0].hotpots[i].data)); //第一张图片热点
       }
-
       this.PSV = new PhotoSphereViewer({
         container: this.viewer,
         panorama: that.baseUrl + that.panos.url,
@@ -263,6 +264,9 @@ export default {
             },
           },
           "caption",
+          {
+            id: "caption",
+          },
           "stereo",
           "markers",
           "fullscreen",
@@ -272,7 +276,7 @@ export default {
       this.showMusicMap = true;
       this.PSV.getNavbarButton("Thumbnail").container.style.width = "60px"; //设置自定义按钮样式
       this.PSV.getNavbarButton("Timeline").container.style.width = "60px"; //设置自定义按钮样式
-
+      this.PSV.getNavbarButton("caption").container.style.width = "260px"; //设置自定义按钮样式
       this.PSV.on("select-marker", function (marker) {
         //在场景内不同接口的全景图跳转 1代表跳转到科研楼
         if (marker.id == 1) {
@@ -303,22 +307,22 @@ export default {
           });
         }
       });
-      this.PSV.on("dblclick", function (e) {
-        that.PSV.addMarker({
-          id: "#" + Math.random(),
-          tooltip: "Generated marker",
-          longitude: e.longitude,
-          latitude: e.latitude,
-          image: require("../assets/pin-red.png"),
-          width: 32,
-          height: 32,
-          anchor: "bottom center",
-          data: {
-            deletable: true,
-          },
-        });
-        console.log(e.longitude, e.latitude);
-      });
+      // this.PSV.on("dblclick", function (e) {
+      //   that.PSV.addMarker({
+      //     id: "#" + Math.random(),
+      //     tooltip: "Generated marker",
+      //     longitude: e.longitude,
+      //     latitude: e.latitude,
+      //     image: require("../assets/pin-red.png"),
+      //     width: 32,
+      //     height: 32,
+      //     anchor: "bottom center",
+      //     data: {
+      //       deletable: true,
+      //     },
+      //   });
+      //   console.log(e.longitude, e.latitude);
+      // });
       // this.PSV.on("position-updated", function(e) {
       //   console.log(e);
       // });
@@ -399,7 +403,9 @@ export default {
         this.showMap = true;
       }
     },
-    timenode() {},
+    timenode() {
+      alert("11");
+    },
   },
 };
 </script>
@@ -409,7 +415,7 @@ export default {
   height: 100%;
   position: relative;
 }
-.imgContent {
+.ThumbnailContent {
   position: absolute;
   bottom: 5%;
   width: 100%;
@@ -418,11 +424,43 @@ export default {
   text-align: center;
   z-index: 10;
 }
+.swiperClass {
+  width: 44%;
+}
+.imgContainer {
+  position: relative;
+  display: inline-block;
+  /* width: 90%; */
+  height: 100%;
+  margin: auto;
+  overflow: hidden;
+  align-content: center;
+}
+.turnLeft {
+  position: absolute;
+  left: 0%;
+  width: 100px;
+  height: 100%;
+}
+.turnImg {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  height: 90%;
+}
+.turnRight {
+  position: absolute;
+  display: inline-block;
+  right: 10%;
+  width: 100px;
+  height: 80%;
+}
+
 .inline {
   position: relative;
   display: inline-block;
   margin: 5px 10px;
-  width: 100px;
+  width: 100px !important;
   height: 100px;
   border: 3px solid #fff;
   align-content: center;
@@ -584,6 +622,7 @@ export default {
   text-align: center;
   height: 700px;
   width: 120px;
+  z-index: 10;
 }
 
 .time {

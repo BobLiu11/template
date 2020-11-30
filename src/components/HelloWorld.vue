@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
     <button @click="getPano">进入室外全景</button>
-    <button @click="getTest">进入科研楼</button>
+    <button @click="getSearchBuilding">进入科研楼</button>
   </div>
 </template>
 
@@ -17,7 +17,7 @@ export default {
     getPano() {
       this.$router.push({ path: "./vrPano" });
     },
-    getTest() {
+    getSearchBuilding() {
       this.$router.push({ path: "./searchBuild" });
     },
   },

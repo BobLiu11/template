@@ -9,12 +9,15 @@ import "./mock/mock";
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import store from './store'
+import VueAwesomeSwiper from 'vue-awesome-swiper'
+import 'swiper/swiper-bundle.css'
 
 Vue.config.productionTip = false;
 
 Vue.use(VueAxios, axios);
 Vue.use(ElementUI);
-/* eslint-disable no-new */
+Vue.use(VueAwesomeSwiper)
+    /* eslint-disable no-new */
 new Vue({
     el: "#app",
     router,
