@@ -94,43 +94,16 @@
       </transition>
     </div>
     <div class="timeline" v-if="myswipe">
-      <Timeline class="timeline">
-        <TimelineItem @click="timenode">
-          <!-- <p class="time"  >一月</p> -->
-          <img src="../assets/time.png" class="time" alt="" />
-          <p class="content">一月仍处寒冬</p>
-        </TimelineItem>
-        <TimelineItem>
-          <!-- <p class="time">二月</p> -->
-          <img src="../assets/time.png" class="time" alt="" />
-          <p class="content">二月寒冰初融</p>
-        </TimelineItem>
-        <TimelineItem>
-          <!-- <p class="time">三月</p> -->
-          <img src="../assets/time.png" class="time" alt="" />
-          <p class="content">三月小草探头</p>
-        </TimelineItem>
-        <TimelineItem>
-          <!-- <p class="time">四月</p> -->
-          <img src="../assets/time.png" class="time" alt="" />
-          <p class="content">四月绿妆素裹</p>
-        </TimelineItem>
-        <TimelineItem>
-          <!-- <p class="time">五月</p> -->
-          <img src="../assets/time.png" class="time" alt="" />
-          <p class="content">五月四处生机</p>
-        </TimelineItem>
-        <TimelineItem>
-          <!-- <p class="time">五月</p> -->
-          <img src="../assets/time.png" class="time" alt="" />
-          <p class="content">五月四处生机</p>
-        </TimelineItem>
-        <TimelineItem>
-          <!-- <p class="time">五月</p> -->
-          <img src="../assets/time.png" class="time" alt="" />
-          <p class="content">五月四处生机</p>
-        </TimelineItem>
-      </Timeline>
+      <el-carousel :interval="4000" type="card" height="200px">
+
+    <el-carousel-item v-for="(val,key,index) in timeImg" :label="timeImg[index+1].name" :key="index">
+      <div class="timeImg" @click="turnTimeImg(timeImg[index+1],key)" 
+      v-bind:style="{ 'background-image': 'url(' + timeImg[index+1].tlimg + ')',
+      'background-repeat':'no-repeat','background-size':'cover' }" ></div>
+      <!-- <h3 class="medium">{{ index+1 }}</h3> -->
+    </el-carousel-item>
+  </el-carousel>
+
     </div>
   </div>
 </template>
@@ -174,6 +147,7 @@ export default {
         slidesPerView: 7,
         grabCursor: true,
       },
+      timeImg:{},
     };
   },
   created() {
@@ -189,8 +163,14 @@ export default {
     async initPhotoSphere(buildId) {
       var that = this;
       let res = await this.initData(buildId);
+
       //获取缩略图图片地址信息和图片中热点信息
       this.thumbnailArray = [];
+      this.timeImg={};
+      if(res.data.data[0].brief){
+        this.timeImg = JSON.parse(res.data.data[0].brief);
+        // console.log(this.timeImg)
+      }
       for (let j = 0; j < res.data.data.length; j++) {
         if (res.data.data[j].thumbUrl) {
           this.thumbnailArray[j] = {};
@@ -365,6 +345,16 @@ export default {
         );
       }
     },
+    turnTimeImg(value,index) {
+      if (this.indexPano != index) {
+        this.indexPano = index;
+        let that = this;
+        this.PSV.clearMarkers();
+        this.PSV.setCaption(value.sourceName);
+        this.PSV.setPanorama(this.baseUrl + value.sourceUrl, true)
+          }
+        
+      },
     //场景转换
     turnSoft() {
       //转换到软件学院全景
@@ -614,17 +604,18 @@ export default {
   transform: translateX(200px);
 }
 .timeline {
-  margin: 0px 0 0 10px;
-  position: fixed;
-  left: 10;
-  bottom: 0;
-  /* position: absolute; */
-  text-align: center;
-  height: 700px;
-  width: 120px;
+  
+ position: absolute;
+  bottom: 1%;
+  left: 10%;
+  width: 80%;
   z-index: 10;
+  text-align: center;
 }
-
+.timeImg{
+  height: 100%;
+  width: 100%;
+}
 .time {
   font-size: 14px;
   font-weight: bold;
@@ -641,4 +632,19 @@ export default {
   width: 50px;
   height: 50px;
 }
+.el-carousel__item h3 {
+    color: #475669;
+    font-size: 14px;
+    opacity: 0.75;
+    line-height: 200px;
+    margin: 0;
+  }
+  
+  .el-carousel__item:nth-child(2n) {
+    background-color: #99a9bf;
+  }
+  
+  .el-carousel__item:nth-child(2n+1) {
+    background-color: #d3dce6;
+  }
 </style>
